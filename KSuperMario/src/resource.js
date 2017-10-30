@@ -21,6 +21,8 @@ var res = {
     select8_jpg : "res/select8.jpg",
     backA_png : "res/backA.png",
     backB_png : "res/backB.png",
+    sliderProgress_png : "res/sliderProgress.png",
+    sliderTrack_png : "res/sliderTrack.png"
 
 
 
