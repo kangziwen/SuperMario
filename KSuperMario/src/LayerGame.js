@@ -206,6 +206,7 @@ ctor:function (i) {
         // 增加控制按钮
         this.addCtrl();
         //.....
+
     },
     addCtrl:function () {
         cc.log("addCtrl....")
@@ -217,6 +218,8 @@ ctor:function (i) {
         // 显示在菜单位置的纹理
 
         this._textureDirNone = cc.textureCache.addImage("res/backKeyImage.png");
+        cc.log("_textureDirNone :",this._textureDirNone.getContentSize().width,this._textureDirNone.getContentSize().height)
+
         this._textureDirLeft = cc.textureCache.addImage("res/backKeyLeft.png");
         this._textureDirRight = cc.textureCache.addImage("res/backKeyRight.png");
         this._menuShow = new cc.Sprite(this._textureDirNone);
@@ -228,20 +231,65 @@ ctor:function (i) {
         var menu = new MenuCtrl();
         this.addChild(menu);
 
-        var left1=new cc.Sprite();
+        var left1=new cc.Sprite();//"res/backKeyLeft.png"
         var left2=new cc.Sprite();
         left1.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
             this._textureDirNone.getContentSize().height))
         left2.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
             this._textureDirNone.getContentSize().height))
-        var left =  new cc.MenuItemImage(left1, left2,  this.moveLeft,this);
+        var left =  new cc.MenuItemSprite(left1, left2,  this.moveLeft,this);
+        cc.log("left1 :",left1.getContentSize().width,left1.getContentSize().height)
+
+        cc.log("left :",left.getContentSize().width,
+            left.getContentSize().height,left.getPosition().x,left.getPosition().y)
         menu.addChild(left);
 
 
+        var right1 =new cc.Sprite( );
+        var right2 = new cc.Sprite( );
+        right1.setContentSize(cc.size(this._textureDirNone.getContentSize().width / 2,
+            this._textureDirNone.getContentSize().height));
+        right2.setContentSize(cc.size(this._textureDirNone.getContentSize().width / 2,
+            this._textureDirNone.getContentSize().height));
+        var right = new cc.MenuItemSprite(right1, right2, this.moveRight, this);
+        menu.addChild(right);
+
+        left.setPosition(cc.p(ptmenuShowPos.x - cc.winSize.width / 2,
+            ptmenuShowPos.y - cc.winSize.height / 2));
+        right.setPosition(cc.p(ptmenuShowPos.x - cc.winSize.width / 2,
+            ptmenuShowPos.y - cc.winSize.height / 2));
+        Common.moveNode(left, cc.p(-this._menuShow.getContentSize().width / 4, 0));
+        Common.moveNode(right, cc.p(this._menuShow.getContentSize().width / 4, 0));
+
+        this._marioDir=Common.DIRECTION.NONE;
+        // 跳跃，发射子弹，菜单
+        this.addJumpFireMenuCtrl();
     },
     //向左走
     moveLeft:function () {
-        cc.log("")
+        cc.log("moveLeft....")
+    },
+    moveRight:function () {
+        cc.log("moveRight....")
+
+    },
+    addJumpFireMenuCtrl:function () {
+        var menu = new cc.Menu() ;
+        this.addChild(menu);
+        
+        var textureAB_Normal = cc.textureCache.addImage("res/AB_normal.png");
+        var textureAB_Select = cc.textureCache.addImage("res/AB_select.png");
+
+        var jumpNormal =  new cc.Sprite(textureAB_Normal)//CCSprite::createWithTexture(textureAB_Normal);
+        var jumpSelect = new cc.Sprite(textureAB_Select);
+
+        var jump = new cc.MenuItemSprite(jumpNormal, jumpSelect, this.Jump, this);
+        menu.addChild(jump);
+        Common.moveNode(jump, cc.p(192, -125));  
+    },
+    Jump:function () {
+       cc.log("Jump.....")
+        //....
     }
 })
 

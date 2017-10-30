@@ -1,6 +1,12 @@
 
 
-var  Common={}
+
+var  Common={
+
+}
+Common.DIRECTION={NONE:0,LEFT:1, RIGHT:2, UP:3, DOWN:4,  }
+
+
 //
 Common.moveNode=function (node,pt) {
 
