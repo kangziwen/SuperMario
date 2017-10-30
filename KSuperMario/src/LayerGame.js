@@ -7,7 +7,14 @@ var LayerGame=cc.Layer.extend({
     _loadFileCount:0,
     _totalfile:0,
     _map:null,
-    ctor:function (i) {
+    _textureDirNone:null,
+    _menuShow:null,
+    _marioDir:null,
+    _mario:null,
+
+    _textureDirLeft :null,
+    _textureDirRight:null,
+ctor:function (i) {
         this._super()
 
         this._idx=i;
@@ -145,8 +152,10 @@ var LayerGame=cc.Layer.extend({
     loadImageCallBack:function (node) {
         this._loadFileCount++;
         this._bar.setPercentage(this._loadFileCount*100/this._totalfile);
-        if(this._loadFileCount>=this._totalfile){
-          this._bar.removeFromParent()
+
+        if(this._loadFileCount==this._totalfile){
+
+            this._bar.removeFromParent()
             this.startGame();
         }
     },
@@ -157,11 +166,82 @@ var LayerGame=cc.Layer.extend({
         this._map=new cc.TMXTiledMap("res/"+Common.format(this._idx+1,"MarioMap",".tmx"));//"res/MarioMap1.tmx" Common.format(this._idx+1,"MarioMap",".tmx")
         this.addChild(this._map)
          Common.moveNode(this._map,cc.p(0,cc.winSize.height-this._map.getContentSize().height))
+
         // 加载蘑菇怪资源
-        var animatio=Common.CreateAnimation("res/Mushroom0.png",0,1,16,0.4)
+        {
+            var animation = Common.CreateAnimation("res/Mushroom0.png", 0, 1, 16, 0.4)
+            cc.animationCache.addAnimation(animation, "MushroomMoving")
+
+            var dead1 = Common.getSpriteFrame("res/Mushroom0.png", 2, 16)
+            cc.spriteFrameCache.addSpriteFrame(dead1, "MushroomDead1")
+
+            var dead2 = Common.getSpriteFrame("res/Mushroom0.png", 3, 16);
+            cc.spriteFrameCache.addSpriteFrame(dead2, "MushroomDead2");
+        }
+        // 加载乌龟动画资源 tortoise0
+        {
+            var animation1 = Common.CreateAnimation("res/tortoise0.png", 2, 3, 18, 0.4);
+            cc.animationCache.addAnimation(animation1, "TortoiseMoveLeft");
+            var animation2 = Common.CreateAnimation("res/tortoise0.png", 4, 5, 18, 0.4);
+            cc.animationCache.addAnimation(animation2, "TortoiseMoveRight");
+            var animation3 = Common.CreateAnimation("res/tortoise0.png", 8, 9, 18, 0.4);
+            cc.animationCache.addAnimation(animation3, "TortoiseDead");
+        }
+
+        // Flower资源
+        {
+            var animation = Common.CreateAnimation("res/flower0.png", 0, 1, 16, 0.4);
+            cc.animationCache.addAnimation(animation, "FlowerShow");
+        }
+        // MushroomReward
+        {
+            var frame = Common.getSpriteFrame("res/rewardMushroomSet.png", 0, 16);
+           cc.spriteFrameCache.addSpriteFrame(frame, "MushroomReward");
+        }
+
+        {
+            var frame = Common.getSpriteFrame("res/rewardMushroomSet.png", 1, 16);
+            cc.spriteFrameCache.addSpriteFrame(frame, "MushroomAddLife");
+        }
+        // 增加控制按钮
+        this.addCtrl();
+        //.....
+    },
+    addCtrl:function () {
+        cc.log("addCtrl....")
+        // 控制按钮的背景图片
+        var sprite=new cc.Sprite(cc.textureCache.addImage("res/controlUI.png"))
+        this.addChild(sprite);
+        sprite.setPosition(cc.p(0,0))
+        sprite.setAnchorPoint(cc.p(0,0))
+        // 显示在菜单位置的纹理
+
+        this._textureDirNone = cc.textureCache.addImage("res/backKeyImage.png");
+        this._textureDirLeft = cc.textureCache.addImage("res/backKeyLeft.png");
+        this._textureDirRight = cc.textureCache.addImage("res/backKeyRight.png");
+        this._menuShow = new cc.Sprite(this._textureDirNone);
+        this.addChild(this._menuShow);
+        var ptmenuShowPos = cc.p(70, 50);
+        this._menuShow.setPosition(ptmenuShowPos);
+        // 定制菜单：每个帧循环都会触发的菜单
+        // 菜单项是透明的，菜单的样式由别的精灵来显示
+        var menu = new MenuCtrl();
+        this.addChild(menu);
+
+        var left1=new cc.Sprite();
+        var left2=new cc.Sprite();
+        left1.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
+            this._textureDirNone.getContentSize().height))
+        left2.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
+            this._textureDirNone.getContentSize().height))
+        var left =  new cc.MenuItemImage(left1, left2,  this.moveLeft,this);
+        menu.addChild(left);
 
 
-
+    },
+    //向左走
+    moveLeft:function () {
+        cc.log("")
     }
 })
 

@@ -18,7 +18,8 @@
         "src/Common.js",
         "src/LayerMenu.js",
         "src/LayerGame.js",
-        "src/ProgressBar.js"
+        "src/ProgressBar.js",
+        "src/MenuCtrl.js"
 
     ]
 }
