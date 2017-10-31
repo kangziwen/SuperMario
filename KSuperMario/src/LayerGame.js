@@ -205,6 +205,8 @@ ctor:function (i) {
         }
         // 增加控制按钮
         this.addCtrl();
+        // 移动马里奥
+
         //.....
 
     },

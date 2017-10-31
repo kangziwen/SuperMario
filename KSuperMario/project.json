@@ -19,7 +19,8 @@
         "src/LayerMenu.js",
         "src/LayerGame.js",
         "src/ProgressBar.js",
-        "src/MenuCtrl.js"
+        "src/MenuCtrl.js",
+        "src/Mario.js"
 
     ]
 }
