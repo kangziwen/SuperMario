@@ -206,9 +206,35 @@ ctor:function (i) {
         // 增加控制按钮
         this.addCtrl();
         // 移动马里奥
-
+        this.schedule(this.moveMario);
+        this._mario=new Mario();
+        /*
+        *
+        * */
+        var objGroup=this._map.getObjectGroup("objects")
+        var objs=objGroup.getObjects()
+        cc.log("objs:",objs.length);
+        var obj;
+        for(var i=0;i<objs.length;i++){
+            obj=objs[i];
+            // cc.log("obj : ",obj.toString())
+            var x=obj["x"];
+            var y=obj["y"];
+            var type=obj["type"];
+            if(type=="BirthPoint"){
+                // 创建marmo
+                this._mario.setPosition(cc.p(x,y-this._map.getTileSize().height))
+                this._mario.setAnchorPoint(cc.p(0,0));
+                this._map.addChild(this._mario)
+            }else {
+                cc.log("qitazhi....")
+            }
+        }
         //.....
 
+    },
+    moveMario:function () {
+       // cc.log("moveMario...")
     },
     addCtrl:function () {
         cc.log("addCtrl....")
