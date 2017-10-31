@@ -227,6 +227,7 @@ ctor:function (i) {
                 this._mario.setAnchorPoint(cc.p(0,0));
                 this._map.addChild(this._mario)
             }else {
+                  //...
                 cc.log("qitazhi....")
             }
         }

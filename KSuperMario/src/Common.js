@@ -37,3 +37,18 @@ Common.getSpriteFrame=function (filename,pos,width) {
 
     return frame;
 }
+Common.Point2Tile=function (map,ptInMap) {
+    var dx=map.getTileSize().width;
+    var dy=map.getTileSize().height;
+    var x=ptInMap.x/dx;
+    var y=ptInMap.y/dy;
+    y=map.getTileSize().height-1-y;
+    return cc.p(x,y)
+}
+
+Common.Tile2PointLB=function (map,ptTile) {
+
+    ptTile.y=map.getMapSize().height-1-ptTile.y;
+    return cc.p(ptTile.x*map.getTileSize().width,
+        ptTile.y*map.getTileSize().height)
+}
