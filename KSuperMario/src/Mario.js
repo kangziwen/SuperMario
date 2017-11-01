@@ -208,8 +208,214 @@ var Mario=cc.Sprite.extend({
         return true;
     },
     canMoveUp:function (dt) {
+        if (this._dead) return false;
+
+        var rcMario = this.getBoundingBox();
+        var map = this.getMap();
+        var pt=[];
+
+        pt[0] = cc.p(cc.rectGetMidX(rcMario), cc.rectGetMaxY(rcMario)+dt*this._speedUp);
+        pt[1] = cc.p( cc.rectGetMinX(rcMario), cc.rectGetMaxY(rcMario)+dt*this._speedUp);
+        pt[2] = cc.p( cc.rectGetMaxX(rcMario), cc.rectGetMaxY(rcMario)+dt*this._speedUp);
+
+        if (pt[0].y >= map.getContentSize().height)
+            return true;
+        // 水管、砖头，地板
+        var layerName = [ "block", "pipe", "land" ];
+        // 坐标转换，将pt转化成地图格子坐标,然后获取gid，判断gid是不是被阻挡
+        for (var i = 0; i < 3; ++i)
+        {
+            var ptTile = Common.Point2Tile(map, pt[i]);
+
+            for (var j = 0; j < 3; ++j)
+            {
+                var layer = map.getLayer(layerName[j]);
+                var gid = layer.getTileGIDAt(ptTile);
+                if (gid != 0)
+                {
+                    // 微调
+                    var ptLB = Common.Tile2PointLB(map, ptTile+cc.p(0, 1));
+                    this.setPositionY(ptLB.y);
+
+                    // 顶到东西了
+                    this.Hit(layerName[j], gid, ptTile);
+
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+    Hit:function (layername,gid,ptTile) {
+        if(layername != "block")return
+
+        var layer=this.getMap().getLayer("layername");
+        var sprit=layer.getTileAt(ptTile);
+        //.....
+
+
+    },
+    moveLeft:function (dt) {
+        if (this._dirRun != Common.DIRECTION.LEFT)
+        {
+            this._dirRun = Common.DIRECTION.LEFT;
+            this._dirFace = Common.DIRECTION.LEFT;
+            this.updateStatus();
+        }
+
+        if (!this.canMoveLeft(dt))
+            return;
+
+        Common.moveNode(this, cc.p(-dt*this._speed, 0));
+    },
+    moveRight:function (dt) {
+        if (this._dirRun != Common.DIRECTION.RIGHT)
+        {
+            this._dirRun = Common.DIRECTION.RIGHT;
+            this._dirFace = Common.DIRECTION.RIGHT;
+            this.updateStatus();
+        }
+
+        if (!this.canMoveRight(dt))
+            return;
+
+        Common.moveNode(this, cc.p(dt*this._speed, 0));
+
+        // 卷动地图
+        // 如果mario位置超过了地图的一半，就应该卷动地图
+        // mario的在世界坐标中的x坐标，超过了窗口的一半
+        var map = getParent();
+        var ptWorld = map.convertToWorldSpace(this.getPosition());
+        if (ptWorld.x > cc.winSize.width / 2)
+        {
+            Common.moveNode(map, cc.p(-dt*this._speed, 0));
+        }
+    },
+    moveUp:function (dt) {
+
+    },
+    moveDown:function (dt) {
         
+    },
+    stop:function () {
+        
+    },
+    updateStatus:function () {
+        this.stopAllActions();
+
+        if (this._autoRun)
+        {
+            if (this._isBig)
+                this.setDisplayFrameWithAnimationName("BigWalkRight", 0);
+            else
+                this.setDisplayFrameWithAnimationName("SmallWalkRight", 0);
+
+            return;
+        }
+
+        if (this._dead)
+        {
+            var  animation = cc.animationCache.getAnimation("smalldie");
+            var animate =new cc.Animate(animation)
+
+            var moveBy = cc.moveBy(cc.winSize.height/this._speed, cc.p(0, -cc.winSize.height))
+            var callfunc =cc.callFunc(this.Dead,this);
+
+            var seq=cc.sequence([animate, moveBy, callfunc])
+            this.runAction(seq);
+            return;
+
+        }
+
+        if (this._bFly)
+        {
+            if (this._isBig)
+            {
+                if (this._dirFace == Common.DIRECTION.LEFT)
+                {
+                    this.setSpriteFrame(cc.spriteFrameCache.getSpriteFrameByName("BigJumpLeft"));
+                }
+                else
+                {
+                    this.setSpriteFrame(cc.spriteFrameCache.getSpriteFrameByName("BigJumpRight"));
+                }
+            }
+            else
+            {
+
+                if (this._dirFace == Common.DIRECTION.LEFT)
+                {
+                    this.setSpriteFrame(cc.spriteFrameCache.getSpriteFrameByName("SmallJumpLeft"));
+                }
+                else
+                {
+                    this.setSpriteFrame(cc.spriteFrameCache.getSpriteFrameByName("SmallJumpRight"));
+                }
+            }
+            return;
+        }
+
+
+        if (this._isBig)
+        {
+            if (this._dirRun == Common.DIRECTION.LEFT)
+            {
+                this.runAction(cc.repeatForever(cc.animate(cc.animationCache.getAnimation("BigWalkLeft"))))
+                //runAction
+            }
+            else if (this._dirRun == Common.DIRECTION.RIGHT)
+            {
+                // runAction
+                this.runAction(cc.repeatForever(cc.animate(cc.animationCache.getAnimation("BigWalkRight"))))
+
+            }
+            else // 静止
+            {
+                if (this._dirFace == Common.DIRECTION.LEFT)
+                {
+                    this.setDisplayFrameWithAnimationName("BigWalkLeft", 0);
+                }
+                else
+                {
+                    this.setDisplayFrameWithAnimationName("BigWalkRight", 0);
+                }
+            }
+        }
+        else
+        {
+
+            if (this._dirRun == Common.DIRECTION.LEFT)
+            {
+                this.runAction(cc.repeatForever(cc.animate(cc.animationCache.getAnimation("SmallWalkLeft"))))
+
+                //runAction
+            }
+            else if (this._dirRun == Common.DIRECTION.RIGHT)
+            {
+                // runAction
+                this.runAction(cc.repeatForever(cc.animate(cc.animationCache.getAnimation("SmallWalkRight"))))
+
+            }
+            else // 静止
+            {
+                if (this._dirFace == Common.DIRECTION.LEFT)
+                {
+                    this.setDisplayFrameWithAnimationName("SmallWalkLeft", 0);
+                }
+                else
+                {
+                    this.setDisplayFrameWithAnimationName("SmallWalkRight", 0);
+                }
+            }
+
+        }
+
+
+    },
+    Dead:function () {
+
     }
+    
 
 })
 Mario._left=0;

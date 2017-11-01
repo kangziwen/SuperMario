@@ -208,9 +208,8 @@ ctor:function (i) {
         // 移动马里奥
         this.schedule(this.moveMario);
         this._mario=new Mario();
-        /*
-        *
-        * */
+        Item._itemReward=[];
+
         var objGroup=this._map.getObjectGroup("objects")
         var objs=objGroup.getObjects()
         cc.log("objs:",objs.length);
@@ -227,15 +226,48 @@ ctor:function (i) {
                 this._mario.setAnchorPoint(cc.p(0,0));
                 this._map.addChild(this._mario)
             }else {
-                  //...
+                  //
+                var item=new Item(obj);
+                if(item){
+                    item._mario=this._mario;
+                    this._map.addChild(item);
+                }
                 cc.log("qitazhi....")
             }
         }
-        //.....
+        //
+        this.schedule(this.checkMarioDie);
+        	//启动定时器来检测Mario是不是碰到旗杆
+        this.schedule(this.checkMarioTouchPole)
+        if(Mario._left==0) Mario._left=3
 
     },
-    moveMario:function () {
+    checkMarioDie:function (dt) {
+
+    },
+    checkMarioTouchPole:function (dt) {
+
+    },
+    //移动mario
+    moveMario:function (dt) {
        // cc.log("moveMario...")
+
+        if(this._mario._autoRun)return;
+
+        if(this._marioDir==Common.DIRECTION.LEFT){
+            this._marioDir=Common.DIRECTION.NONE;
+            this._mario.moveLeft(dt);
+        }else if(this._marioDir==Common.DIRECTION.RIGHT){
+            this._marioDir=Common.DIRECTION.NONE;
+            this._mario.moveRight(dt);
+        }else {
+            this._menuShow.setTexture(this._textureDirNone)
+            this._mario.stop()
+        }
+        this._mario.moveUp(dt);
+        this._mario.moveDown(dt)
+
+
     },
     addCtrl:function () {
         cc.log("addCtrl....")
@@ -297,9 +329,14 @@ ctor:function (i) {
     //向左走
     moveLeft:function () {
         cc.log("moveLeft....")
+        this._menuShow.setTexture(this._textureDirLeft);
+        this._marioDir=Common.DIRECTION.LEFT;
+
     },
     moveRight:function () {
         cc.log("moveRight....")
+        this._menuShow.setTexture(this._textureDirRight)
+        this._marioDir=Common.DIRECTION.RIGHT
 
     },
     addJumpFireMenuCtrl:function () {
@@ -318,7 +355,9 @@ ctor:function (i) {
     },
     Jump:function () {
        cc.log("Jump.....")
-        //....
+        //
+        if(this._mario._autoRun)return;
+       this._mario.jump();
     }
 })
 
