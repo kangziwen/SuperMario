@@ -42,7 +42,10 @@ Common.Point2Tile=function (map,ptInMap) {
     var dy=map.getTileSize().height;
     var x=ptInMap.x/dx;
     var y=ptInMap.y/dy;
-    y=map.getTileSize().height-1-y;
+    // cc.log("Point2Tile dx dy:",dx,dy)
+    y=map.getMapSize().height-1-y;
+    // cc.log("Point2Tile map.getMapSize().height :",map.getMapSize().height)
+
     return cc.p(x,y)
 }
 

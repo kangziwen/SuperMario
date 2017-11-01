@@ -354,7 +354,7 @@ ctor:function (i) {
         Common.moveNode(jump, cc.p(192, -125));  
     },
     Jump:function () {
-       cc.log("Jump.....")
+       // cc.log("Jump.....")
         //
         if(this._mario._autoRun)return;
        this._mario.jump();
