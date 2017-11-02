@@ -222,7 +222,7 @@ ctor:function (i) {
             var type=obj["type"];
             if(type=="BirthPoint"){
                 // 创建marmo
-                this._mario.setPosition(cc.p(x,y-this._map.getTileSize().height))
+                this._mario.setPosition(cc.p(x,y-this._map.getTileSize().height))//
                 this._mario.setAnchorPoint(cc.p(0,0));
                 this._map.addChild(this._mario)
             }else {
@@ -279,19 +279,37 @@ ctor:function (i) {
         // 显示在菜单位置的纹理
 
         this._textureDirNone = cc.textureCache.addImage("res/backKeyImage.png");
-        cc.log("_textureDirNone :",this._textureDirNone.getContentSize().width,this._textureDirNone.getContentSize().height)
-
+        // cc.log("_textureDirNone :",this._textureDirNone.getContentSize().width,this._textureDirNone.getContentSize().height)
         this._textureDirLeft = cc.textureCache.addImage("res/backKeyLeft.png");
         this._textureDirRight = cc.textureCache.addImage("res/backKeyRight.png");
+
         this._menuShow = new cc.Sprite(this._textureDirNone);
         this.addChild(this._menuShow);
         var ptmenuShowPos = cc.p(70, 50);
         this._menuShow.setPosition(ptmenuShowPos);
+
+
+        // var menu= new ccui.ImageView("res/backKeyLeft.png");
+        // menu.setColor(cc.color(0,255,0))
+        // this.addChild(menu);
+        // menu.setAnchorPoint(cc.p(0,0))
+        // menu.setPosition(this._menuShow.getBoundingBox().x,this._menuShow.getBoundingBox().y);
+        // menu.setContentSize(this._menuShow.getContentSize())
+        // menu.setTouchEnabled(true)
+        //
+        // menu.addTouchEventListener(this.touchEvent ,this)
+        //
+        //
+        //
+        // cc.log("menu ",menu.getBoundingBox().x,menu.getBoundingBox().y,menu.getBoundingBox().width,menu.getBoundingBox().height,
+        //     this._menuShow.getBoundingBox().x, this._menuShow.getBoundingBox().y
+        //     , this._menuShow.getBoundingBox().width, this._menuShow.getBoundingBox().height)
+
         // 定制菜单：每个帧循环都会触发的菜单
         // 菜单项是透明的，菜单的样式由别的精灵来显示
         var menu = new MenuCtrl();
-        this.addChild(menu);
 
+        this.addChild(menu);
         var left1=new cc.Sprite();//"res/backKeyLeft.png"
         var left2=new cc.Sprite();
         left1.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
@@ -299,10 +317,10 @@ ctor:function (i) {
         left2.setContentSize(cc.size(this._textureDirNone.getContentSize().width/2.0,
             this._textureDirNone.getContentSize().height))
         var left =  new cc.MenuItemSprite(left1, left2,  this.moveLeft,this);
-        cc.log("left1 :",left1.getContentSize().width,left1.getContentSize().height)
-
-        cc.log("left :",left.getContentSize().width,
-            left.getContentSize().height,left.getPosition().x,left.getPosition().y)
+        // cc.log("left1 :",left1.getContentSize().width,left1.getContentSize().height)
+        //
+        // cc.log("left :",left.getContentSize().width,
+        //     left.getContentSize().height,left.getPosition().x,left.getPosition().y)
         menu.addChild(left);
 
 
@@ -314,7 +332,7 @@ ctor:function (i) {
             this._textureDirNone.getContentSize().height));
         var right = new cc.MenuItemSprite(right1, right2, this.moveRight, this);
         menu.addChild(right);
-
+        cc.log("menu._state :",menu._state)
         left.setPosition(cc.p(ptmenuShowPos.x - cc.winSize.width / 2,
             ptmenuShowPos.y - cc.winSize.height / 2));
         right.setPosition(cc.p(ptmenuShowPos.x - cc.winSize.width / 2,
@@ -326,6 +344,10 @@ ctor:function (i) {
         // 跳跃，发射子弹，菜单
         this.addJumpFireMenuCtrl();
     },
+    // touchEvent:function (sender,type) {
+    //     cc.log("KMenuCtrl touchEvent....")
+    //
+    // },
     //向左走
     moveLeft:function () {
         cc.log("moveLeft....")

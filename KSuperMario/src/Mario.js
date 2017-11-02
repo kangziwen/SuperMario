@@ -2,6 +2,7 @@
 
 var Mario=cc.Sprite.extend({
 
+    //新加属性，出生坐标
     ctor:function () {
         this._super()
         // 设置脸朝右的帧
@@ -160,7 +161,6 @@ var Mario=cc.Sprite.extend({
 
                 if (gid != 0)
                 {
-
                     return false;
                 }
             }
@@ -172,6 +172,7 @@ var Mario=cc.Sprite.extend({
         if (this._dead) return false;
 
         var  rcMario = this.getBoundingBox();
+        cc.log("rcMario :",rcMario.x,rcMario.y,rcMario.width,rcMario.height)
         var map = this.getMap();
         var pt=[];
         pt[0] = cc.p( cc.rectGetMidX(rcMario), cc.rectGetMinY(rcMario) - dt*this._speedDown);
@@ -179,8 +180,10 @@ var Mario=cc.Sprite.extend({
         pt[2] = cc.p( cc.rectGetMaxX(rcMario), cc.rectGetMinY(rcMario) - dt*this._speedDown);
 
         if (pt[0].y >= map.getContentSize().height)
+        {
+            // cc.log("dayudayu....")
             return true;
-      //  cc.log("canMoveDown p[0].:",pt[0].x,pt[0].y)
+        }
 
         // 坐标转换，将pt转化成地图格子坐标,然后获取gid，判断gid是不是被阻挡
         // 水管、砖头，地板
@@ -188,7 +191,6 @@ var Mario=cc.Sprite.extend({
         for (var i = 0; i < 3; ++i)
         {
             var ptTile = Common.Point2Tile(map, pt[i]);
-            cc.log("canMoveDown ptTile : ",ptTile.x ,ptTile.y)
             // if(ptTile.x>=map.getMapSize().width||ptTile.y>=map.getMapSize().height){
             //     return false;
             // }
@@ -197,10 +199,11 @@ var Mario=cc.Sprite.extend({
             for (var j = 0; j < 3; ++j)
             {
                 var layer = map.getLayer(layerName[j]);
-                cc.log("canMoveDown ptTile: ",ptTile.x ,ptTile.y)
                 var gid = layer.getTileGIDAt(ptTile);
                 if (gid != 0)
                 {
+
+
                     /*
 
                     // 微调
@@ -210,15 +213,12 @@ var Mario=cc.Sprite.extend({
 
                    在自动运行情况下，
                     var dist = Math.abs(Item._Flag.getPositionX() - this.getPositionX());
-                    cc.log("canMoveDown return false _autoRun is %d, dist=%d", this._autoRun, dist);
                     if (this._autoRun && !this._flagRunAction)
                     {
                         this._flagRunAction = true;
                         var ptFlagEnd = Common.Tile2PointLB(map, ptTile);
                         Item._Flag.runAction(cc.moveTo(1,cc.p(Item._Flag.getPositionX(),ptFlagEnd.y+16)));
                     }
-
-
                       */
                     return false;
 
@@ -363,7 +363,7 @@ var Mario=cc.Sprite.extend({
         this._speedUp -= this._speedAcc;
     },
     moveDown:function (dt) {
-        if (this._speedUp <= 0)
+        if (this._speedUp <= 0)//
         {
             if (this.canMoveDown(dt))
             {
@@ -373,8 +373,9 @@ var Mario=cc.Sprite.extend({
                     this._bFly = true;
                     this.updateStatus();
                 }
-
-                Common.moveNode(this, cc.p(0, -dt*this._speedDown));
+                    // var down=0;
+                  // if()
+                  Common.moveNode(this, cc.p(0, -dt*this._speedDown));
                 this._speedDown += this._speedAcc;
             }
             else
@@ -390,7 +391,11 @@ var Mario=cc.Sprite.extend({
         }
     },
     stop:function () {
-        
+        if (this._dirRun != Common.DIRECTION.NONE)
+        {
+            this._dirRun = Common.DIRECTION.NONE;
+            this.updateStatus();
+        }
     },
     updateStatus:function () {
         this.stopAllActions();
